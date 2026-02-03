@@ -22,7 +22,7 @@ public static class ThreadRace
         Console.WriteLine("Race is finished");
     }
 
-    public static void RunDrone(Drone drone)
+    private static void RunDrone(Drone drone)
     {
         Console.WriteLine($"Drone {drone.Name} started its run.");
 
