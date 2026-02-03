@@ -71,6 +71,14 @@ public static class TaskRaceWithCrash
             }
 
         }
-        Continuation();
+        try
+        {
+            Continuation();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
     }
 }
