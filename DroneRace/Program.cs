@@ -12,3 +12,5 @@ Drone[] drones =
 };
 
 ThreadRace.RaceDronesUsingThreads(drones);
+
+TaskRace.RaceDronesUsingTasks(drones).Wait();
