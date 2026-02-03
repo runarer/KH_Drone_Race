@@ -29,7 +29,7 @@ public static class ThreadRace
         for (int i = 0; i < drone.MaxCheckpoints; i++)
         {
             Thread.Sleep(drone.DelayMs);
-            Console.WriteLine($"Drone reached checkpoint {i + 1}");
+            Console.WriteLine($"Drone {drone.Name} reached checkpoint {i + 1}");
 
         }
         Console.WriteLine($"Drone {drone.Name} reached its final destination");
