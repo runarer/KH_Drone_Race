@@ -12,11 +12,18 @@ public static class TaskRace
 
         Task.WhenAll(tasks).ContinueWith(allTasks =>
         {
-            foreach (var name in allTasks.Result)
+            if (allTasks.IsFaulted)
             {
-                Console.WriteLine($"Drone {name} has finished.");
+                mainTsc.SetException(allTasks.Exception);
             }
-            mainTsc.SetResult();
+            else
+            {
+                foreach (var name in allTasks.Result)
+                {
+                    Console.WriteLine($"Drone {name} has finished.");
+                }
+                mainTsc.SetResult();
+            }
         });
         return mainTsc.Task;
     }
@@ -47,22 +54,29 @@ public static class TaskRace
 
         void Continuation()
         {
-            if (currentCheckPoint < drone.MaxCheckpoints)
+            try
             {
-                var delayTask = Task.Delay(drone.DelayMs);
-
-                var awaiter = delayTask.GetAwaiter();
-
-                awaiter.OnCompleted(() =>
+                if (currentCheckPoint < drone.MaxCheckpoints)
                 {
-                    Console.WriteLine($"Drone {drone.Name} has reached checkpoint {++currentCheckPoint}");
-                    Continuation();
-                });
+                    var delayTask = Task.Delay(drone.DelayMs);
+
+                    var awaiter = delayTask.GetAwaiter();
+
+                    awaiter.OnCompleted(() =>
+                    {
+                        Console.WriteLine($"Drone {drone.Name} has reached checkpoint {++currentCheckPoint}");
+                        Continuation();
+                    });
+                }
+                else
+                {
+                    Console.WriteLine($"Drone {drone.Name} has reached final destination.");
+                    tsc.SetResult(drone.Name);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine($"Drone {drone.Name} has reached final destination.");
-                tsc.SetResult(drone.Name);
+                tsc.SetException(ex);
             }
 
         }
