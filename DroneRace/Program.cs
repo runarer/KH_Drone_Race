@@ -11,9 +11,9 @@ Drone[] drones =
     // new("Two Ton Tony",15,12),
 };
 
-// ThreadRace.RaceDronesUsingThreads(drones);
+ThreadRace.RaceDronesUsingThreads(drones);
 
-// TaskRace.RaceDronesUsingTasks(drones).Wait();
+TaskRace.RaceDronesUsingTasks(drones).Wait();
 
 try
 {
@@ -24,5 +24,11 @@ catch (Exception ex)
     Console.WriteLine(ex.Message);
 }
 
-
-
+try
+{
+    await AsyncRace.RaceDronesUsingAsync(drones);
+}
+catch (Exception ex)
+{
+    Console.WriteLine(ex.Message);
+}
