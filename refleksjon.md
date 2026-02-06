@@ -46,6 +46,17 @@ Det er derfor "Race is finished" blir skrevet ut før dronene har startet sitt k
 
 ## Del B
 
+Task og TaskComletionSource er definitivt mer kode enn Threads.
+Denne bruken av rekusive metoder for loop og funksjoner som argumenter til
+andre funksjoner blir fort litt mer komplisert å holde rede på og reflektere rundt.
+
+Det at man fange exceptions og sende beskjed oppover er definitivt en fordel.
+
 ## Del C
+
+Async/Await resulterer i betydlig mindre kode som skrives nesten helt likt som synkron kode.
+Exception handling fungerer som ved synkron kode.
+Dette gjør at det er lettere å reflekter rundt koden, noe som igjen gir mulighet for en mer
+vedlikeholdbar kode.
 
 ## Del D
