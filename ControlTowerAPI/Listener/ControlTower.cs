@@ -13,7 +13,6 @@ public class ControlTower
     public ControlTower(string uriPrefix)
     {
         _listener = new();
-
         _listener.Prefixes.Add(uriPrefix);
     }
 
@@ -46,19 +45,24 @@ public class ControlTower
 
     }
 
-    private async Task RegisterDrone(HttpListenerContext context)
+    private async Task<bool> RegisterDrone(Drone drone)
     {
-
+        if (_registredDrones.ContainsKey(drone.Name))
+            return false;
+        _registredDrones[drone.Name] = drone;
+        return true;
     }
 
-    private async Task GetWeather(HttpListenerContext context)
+    private async Task<string> GetWeather(int checkpoint)
     {
 
     }
 
     private async Task<Drone?> GetRoute(string name)
     {
-
+        if (_registredDrones.TryGetValue(name, out Drone? drone))
+            return drone;
+        return null;
     }
 
 }
