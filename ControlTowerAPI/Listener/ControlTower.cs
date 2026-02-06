@@ -55,7 +55,7 @@ public class ControlTower
 
     private async Task<string> GetWeather(int checkpoint)
     {
-
+        return string.Empty;
     }
 
     private async Task<Drone?> GetRoute(string name)
