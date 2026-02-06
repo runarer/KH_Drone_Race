@@ -2,6 +2,7 @@
 
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using ControlTowerAPI.Model;
 
 namespace ControlTowerAPI.Listener;
@@ -121,14 +122,23 @@ public class ControlTower
             }
             else
             {
-
+                string body = await ReadPostBody(request);
+                try
+                {
+                    Drone? drone = JsonSerializer.Deserialize<Drone>(body);
+                    _registredDrones[drone.Name] = drone;
+                }
+                catch (JsonException)
+                {
+                    throw;
+                }
             }
 
         }
         catch (ArgumentNullException) { throw; }
     }
 
-    private async Task<string> ReadPostBody(HttpListenerRequest request)
+    private static async Task<string> ReadPostBody(HttpListenerRequest request)
     {
         using Stream body = request.InputStream;
         using StreamReader reader = new(body, request.ContentEncoding);
