@@ -105,6 +105,36 @@ public class ControlTower
         catch (ArgumentNullException) { throw; }
     }
 
+    private async Task ProcessPostRequest(HttpListenerContext context)
+    {
+        try
+        {
+            var request = context.Request;
+            var response = context.Response;
+
+            byte[] responseMessage;
+
+            if (!request.HasEntityBody)
+            {
+                response.StatusCode = (int)HttpStatusCode.BadRequest;
+                responseMessage = Encoding.UTF8.GetBytes("Cannot process request, no request body");
+            }
+            else
+            {
+
+            }
+
+        }
+        catch (ArgumentNullException) { throw; }
+    }
+
+    private async Task<string> ReadPostBody(HttpListenerRequest request)
+    {
+        using Stream body = request.InputStream;
+        using StreamReader reader = new(body, request.ContentEncoding);
+        return await reader.ReadToEndAsync();
+    }
+
     private async Task<bool> RegisterDrone(Drone drone)
     {
         if (_registredDrones.ContainsKey(drone.Name))
