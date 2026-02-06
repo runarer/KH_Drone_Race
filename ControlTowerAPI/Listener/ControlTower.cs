@@ -38,7 +38,12 @@ public class ControlTower
 
     private async Task ProcessBadRequest(HttpListenerContext context)
     {
-
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        byte[] message = Encoding.UTF8.GetBytes("Request not supported");
+        context.Response.ContentType = "text/plain";
+        context.Response.ContentLength64 = message.Length;
+        using var output = context.Response.OutputStream;
+        await output.WriteAsync(message);
     }
 
     private async Task ProcessGetRequest(HttpListenerContext context)
