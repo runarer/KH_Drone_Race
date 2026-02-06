@@ -1,6 +1,7 @@
 
 
 using System.Net;
+using System.Text;
 using ControlTowerAPI.Model;
 
 namespace ControlTowerAPI.Listener;
@@ -25,10 +26,10 @@ public class ControlTower
             try
             {
                 var context = await _listener.GetContextAsync();
-                if (context.Request.HttpMethod != "GET")
-                    await ProcessBadRequest(context);
-                else
+                if (context.Request.HttpMethod == "GET")
                     await ProcessGetRequest(context);
+                else
+                    await ProcessBadRequest(context);
             }
             catch (HttpListenerException) { break; }
             catch (ArgumentException) { break; }
@@ -42,7 +43,53 @@ public class ControlTower
 
     private async Task ProcessGetRequest(HttpListenerContext context)
     {
+        try
+        {
+            var request = context.Request;
+            var response = context.Response;
 
+            byte[] responseMessage;
+
+            // /weather
+            if (request.Url is not null && request.Url.AbsolutePath == "/weather")
+            {
+                response.StatusCode = (int)HttpStatusCode.OK;
+                responseMessage = Encoding.UTF8.GetBytes($"'weather':'{GetWeather()}");
+                response.ContentType = "application/json";
+            }
+            // /drone?=name
+            else if (request.QueryString["drone"] is not null)
+            {
+                string droneName = request.QueryString["drone"]!;
+                Drone? drone = GetRoute(droneName);
+
+                // drone not registered
+                if (drone is null)
+                {
+                    response.StatusCode = (int)HttpStatusCode.NotFound;
+                    responseMessage = Encoding.UTF8.GetBytes($"No drone with name {droneName} found!");
+                    response.ContentType = "text/plain";
+                }
+                // return checkpoints
+                else
+                {
+                    response.StatusCode = (int)HttpStatusCode.OK;
+                    responseMessage = Encoding.UTF8.GetBytes($"'checkpoints':{drone.MaxCheckpoints}");
+                    response.ContentType = "application/json";
+                }
+            }
+            // Bad get request
+            else
+            {
+                response.StatusCode = (int)HttpStatusCode.BadRequest;
+                responseMessage = Encoding.UTF8.GetBytes("Request not supported");
+                response.ContentType = "text/plain";
+            }
+            response.ContentLength64 = responseMessage.Length;
+            using var output = response.OutputStream;
+            await output.WriteAsync(responseMessage);
+        }
+        catch (ArgumentNullException) { throw; }
     }
 
     private async Task<bool> RegisterDrone(Drone drone)
@@ -53,12 +100,12 @@ public class ControlTower
         return true;
     }
 
-    private async Task<string> GetWeather(int checkpoint)
+    private string GetWeather()
     {
         return string.Empty;
     }
 
-    private async Task<Drone?> GetRoute(string name)
+    private Drone? GetRoute(string name)
     {
         if (_registredDrones.TryGetValue(name, out Drone? drone))
             return drone;
