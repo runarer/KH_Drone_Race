@@ -9,7 +9,7 @@ namespace ControlTowerAPI.Listener;
 public class ControlTower
 {
     private HttpListener _listener;
-    private Dictionary<string, Drone> _registredDrones;
+    private Dictionary<string, Drone> _registredDrones = [];
 
     public ControlTower(string uriPrefix)
     {
@@ -26,10 +26,18 @@ public class ControlTower
             try
             {
                 var context = await _listener.GetContextAsync();
-                if (context.Request.HttpMethod == "GET")
-                    await ProcessGetRequest(context);
-                else
-                    await ProcessBadRequest(context);
+                switch (context.Request.HttpMethod)
+                {
+                    case "GET":
+                        await ProcessGetRequest(context);
+                        break;
+                    case "POST":
+                        await ProcessPostRequest(context);
+                        break;
+                    default:
+                        await ProcessBadRequest(context);
+                        break;
+                }
             }
             catch (HttpListenerException) { break; }
             catch (ArgumentException) { break; }
