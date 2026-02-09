@@ -81,7 +81,7 @@ public class ControlTower
                 response.ContentType = "application/json";
             }
             // /drone?=name
-            else if (request.QueryString["drone"] is not null)
+            else if (request.Url is not null && request.Url.AbsolutePath == "/route" && request.QueryString["drone"] is not null)
             {
                 string droneName = request.QueryString["drone"]!;
                 Drone? drone = GetRoute(droneName);
@@ -145,17 +145,9 @@ public class ControlTower
                     }
                     else
                     {
-                        bool created = RegisterDrone(drone);
-
-                        if (created)
-                        {
-                            response.StatusCode = (int)HttpStatusCode.Created;
-                        }
-                        else
-                        {
-                            responseMessage = "Drone with same name already registered";
-                            response.StatusCode = (int)HttpStatusCode.Conflict;
-                        }
+                        var (code, msg) = RegisterDrone(drone);
+                        response.StatusCode = (int)code;
+                        responseMessage = msg;
                     }
                 }
                 catch (JsonException)
@@ -188,12 +180,16 @@ public class ControlTower
         return await reader.ReadToEndAsync();
     }
 
-    private bool RegisterDrone(Drone drone)
+    private (HttpStatusCode, string) RegisterDrone(Drone drone)
     {
+        if (drone.MaxCheckpoints < 0)
+            return (HttpStatusCode.UnprocessableContent, "Cannot use negative number of checkpoints");
+        if (drone.DelayMs < 0)
+            return (HttpStatusCode.UnprocessableContent, "Cannot use negative delay, time moves forward!");
         if (_registredDrones.ContainsKey(drone.Name))
-            return false;
+            return (HttpStatusCode.Conflict, "Drone with same name already registered");
         _registredDrones[drone.Name] = drone;
-        return true;
+        return (HttpStatusCode.Created, drone.Name);
     }
 
     private string GetWeather()
