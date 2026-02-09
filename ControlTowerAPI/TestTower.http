@@ -19,7 +19,7 @@ Content-Type: application/json
     "DelayMs" : 13
 }
 
-###
+### Misformed JSON, should retrun a 400
 POST {{base}}/
 Content-Type: application/json
 
@@ -29,5 +29,38 @@ Content-Type: application/json
     "delayms" : 7
 }
 
-###
-GET {{base}}/drone?name=timmy
+### Misformed JSON, should retrun a 400
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "name" : "Berta",
+    "maxcheckpoints" : 12,
+}
+
+### Should return 422
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "Name" : "Dolly",
+    "MaxCheckpoints" : -6,
+    "DelayMs" : 13
+}
+
+### Should return 422
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "Name" : "Donny",
+    "MaxCheckpoints" : 6,
+    "DelayMs" : -13
+}
+
+### Should return 6 if used after above POST
+GET {{base}}/route?drone=timmy
+
+### Should return a 404
+GET {{base}}/route?drone=billy
+
