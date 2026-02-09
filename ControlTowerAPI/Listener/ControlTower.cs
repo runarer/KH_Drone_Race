@@ -47,6 +47,11 @@ public class ControlTower
         }
     }
 
+    public void Stop()
+    {
+        _listener.Stop();
+    }
+
     private async Task ProcessBadRequest(HttpListenerContext context)
     {
         context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
