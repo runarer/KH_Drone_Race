@@ -97,7 +97,7 @@ public class ControlTower
                 else
                 {
                     response.StatusCode = (int)HttpStatusCode.OK;
-                    responseMessage = Encoding.UTF8.GetBytes($"'checkpoints':{drone.MaxCheckpoints}");
+                    responseMessage = Encoding.UTF8.GetBytes($"{{'checkpoints':{drone.MaxCheckpoints}}}");
                     response.ContentType = "application/json";
                 }
             }
