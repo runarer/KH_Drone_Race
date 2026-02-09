@@ -3,5 +3,31 @@
 ### Should return 
 GET {{base}}/weather
 
-###
+### Should return 400
 GET {{base}}/nice_weather
+
+### Should return 400
+DELETE {{base}}
+
+### One time -> Created, two times -> Conflict
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "Name" : "timmy",
+    "MaxCheckpoints" : 6,
+    "DelayMs" : 13
+}
+
+###
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "name" : "Berta",
+    "maxcheckpoints" : 12,
+    "delayms" : 7
+}
+
+###
+GET {{base}}/drone?name=timmy
