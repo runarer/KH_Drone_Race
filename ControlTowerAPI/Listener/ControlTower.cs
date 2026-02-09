@@ -146,15 +146,15 @@ public class ControlTower
                     else
                     {
                         bool created = RegisterDrone(drone);
-                        if (!created)
+
+                        if (created)
                         {
                             response.StatusCode = (int)HttpStatusCode.Created;
-
                         }
                         else
                         {
+                            responseMessage = "Drone with same name already registered";
                             response.StatusCode = (int)HttpStatusCode.Conflict;
-                            responseMessage = "Drone already excist";
                         }
                     }
                 }
@@ -162,6 +162,11 @@ public class ControlTower
                 {
                     response.StatusCode = (int)HttpStatusCode.BadRequest;
                     responseMessage = "Jason did not play by the rules!";
+                }
+                catch (ArgumentNullException)
+                {
+                    response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    responseMessage = "Json could not be understood";
                 }
             }
 
