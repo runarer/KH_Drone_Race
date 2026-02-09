@@ -58,6 +58,16 @@ Content-Type: application/json
     "DelayMs" : -13
 }
 
+### Should return 422
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "Name" : "",
+    "MaxCheckpoints" : 6,
+    "DelayMs" : 13
+}
+
 ### Should return 6 if used after above POST
 GET {{base}}/route?drone=timmy
 
