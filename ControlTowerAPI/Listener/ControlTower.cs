@@ -12,6 +12,8 @@ public class ControlTower
     private HttpListener _listener;
     private Dictionary<string, Drone> _registredDrones = [];
 
+    private Random _randomizer = new();
+
     public ControlTower(string uriPrefix)
     {
         _listener = new();
@@ -181,7 +183,8 @@ public class ControlTower
 
     private string GetWeather()
     {
-        return string.Empty;
+        string[] weather = ["clear", "wind", "storm"];
+        return weather[_randomizer.Next(0, weather.Length)];
     }
 
     private Drone? GetRoute(string name)
