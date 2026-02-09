@@ -113,12 +113,12 @@ public class ControlTower
             var request = context.Request;
             var response = context.Response;
 
-            byte[] responseMessage;
+            string responseMessage = string.Empty;
 
             if (!request.HasEntityBody)
             {
                 response.StatusCode = (int)HttpStatusCode.BadRequest;
-                responseMessage = Encoding.UTF8.GetBytes("Cannot process request, no request body");
+                responseMessage = "Cannot process request, no request body";
             }
             else
             {
@@ -126,13 +126,39 @@ public class ControlTower
                 try
                 {
                     Drone? drone = JsonSerializer.Deserialize<Drone>(body);
-                    _registredDrones[drone.Name] = drone;
+                    if (drone is null)
+                    {
+                        response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        responseMessage = "Body could not be understod";
+                    }
+                    else
+                    {
+                        bool created = RegisterDrone(drone);
+                        if (!created)
+                        {
+                            response.StatusCode = (int)HttpStatusCode.Created;
+
+                        }
+                        else
+                        {
+                            response.StatusCode = (int)HttpStatusCode.Conflict;
+                            responseMessage = "Drone already excist";
+                        }
+                    }
                 }
                 catch (JsonException)
                 {
-                    throw;
+                    response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    responseMessage = "Jason did not play by the rules!";
                 }
             }
+
+            byte[] responseMessageEncoded = Encoding.UTF8.GetBytes(responseMessage);
+
+            response.ContentLength64 = responseMessageEncoded.Length;
+
+            using var output = response.OutputStream;
+            await output.WriteAsync(responseMessageEncoded);
 
         }
         catch (ArgumentNullException) { throw; }
@@ -145,7 +171,7 @@ public class ControlTower
         return await reader.ReadToEndAsync();
     }
 
-    private async Task<bool> RegisterDrone(Drone drone)
+    private bool RegisterDrone(Drone drone)
     {
         if (_registredDrones.ContainsKey(drone.Name))
             return false;
