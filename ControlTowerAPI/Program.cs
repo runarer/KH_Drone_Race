@@ -1,7 +1,7 @@
 ﻿
 using ControlTowerAPI.Listener;
 
-var tower = new ControlTower("http://localhost:6060");
+var tower = new ControlTower("http://localhost:6060/");
 
 try
 {
