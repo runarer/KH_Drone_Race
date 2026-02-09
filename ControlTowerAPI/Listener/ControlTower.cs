@@ -180,6 +180,7 @@ public class ControlTower
         return await reader.ReadToEndAsync();
     }
 
+    //  [NOTE] This can probably be replaced with data annotasions
     private (HttpStatusCode, string) RegisterDrone(Drone drone)
     {
         if (string.IsNullOrWhiteSpace(drone.Name))

@@ -74,3 +74,6 @@ GET {{base}}/route?drone=timmy
 ### Should return a 404
 GET {{base}}/route?drone=billy
 
+### Should return a 404
+GET {{base}}/route?drone=
+
