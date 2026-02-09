@@ -182,6 +182,8 @@ public class ControlTower
 
     private (HttpStatusCode, string) RegisterDrone(Drone drone)
     {
+        if (string.IsNullOrWhiteSpace(drone.Name))
+            return (HttpStatusCode.UnprocessableContent, "Needs a non-empty name");
         if (drone.MaxCheckpoints < 0)
             return (HttpStatusCode.UnprocessableContent, "Cannot use negative number of checkpoints");
         if (drone.DelayMs < 0)
