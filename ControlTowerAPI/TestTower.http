@@ -1,0 +1,7 @@
+@base = http://localhost:6060
+
+### Should return 
+GET {{base}}/weather
+
+###
+GET {{base}}/nice_weather
