@@ -75,7 +75,9 @@ public class ControlTower
             if (request.Url is not null && request.Url.AbsolutePath == "/weather")
             {
                 response.StatusCode = (int)HttpStatusCode.OK;
-                responseMessage = Encoding.UTF8.GetBytes($"'weather':'{GetWeather()}");
+                responseMessage = Encoding.UTF8.GetBytes(
+                    JsonSerializer.Serialize(new { Weather = GetWeather() })
+                );
                 response.ContentType = "application/json";
             }
             // /drone?=name
