@@ -57,6 +57,9 @@ static async Task Run()
                     Console.WriteLine(ex.Message);
                 }
                 break;
+            case ConsoleKey.D6:
+                RunTower();
+                break;
             case ConsoleKey.Q:
                 running = false;
                 break;
@@ -66,8 +69,29 @@ static async Task Run()
     }
 }
 
+static void RunTower()
+{
+    var tower = new ControlTower("http://localhost:6060/");
+
+    try
+    {
+        _ = tower.StartListener();
+        Console.Clear();
+        Console.WriteLine("File TestTower.http in DroneRaceApp folder can be used to test");
+        Console.WriteLine("connections to the server with VSCode extensions like \"Rest Client\"\n");
+        Console.WriteLine("Press any key to stop the tower...");
+        Console.ReadKey(intercept: true);
+        Console.WriteLine("\nControl Tower stopped\n");
+    }
+    finally
+    {
+        tower.Stop();
+    }
+}
+
 static void PressToContinue()
 {
+
     Console.WriteLine("\nPress any key to continue.");
     Console.ReadKey(intercept: true);
 }
@@ -92,6 +116,10 @@ static void DisplayMenu()
 
     5. Part C: With A Simulated Crash
 
+    ---------------------------------------
+    
+    6. Start the Control Tower on http://localhost:6060/
+       
     ---------------------------------------
     
     Q. Quit
