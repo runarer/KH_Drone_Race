@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="ControlTowerAPI/ControlTowerAPI.csproj" />
   <Project Path="ControlTowerRace/ControlTowerRace.csproj" />
+  <Project Path="DroneModel/DroneModel.csproj" />
   <Project Path="DroneRace/DroneRace.csproj" />
   <Project Path="DroneRaceApp/DroneRaceApp.csproj" />
 </Solution>
