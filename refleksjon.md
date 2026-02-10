@@ -58,5 +58,3 @@ Async/Await resulterer i betydlig mindre kode som skrives nesten helt likt som s
 Exception handling fungerer som ved synkron kode.
 Dette gjør at det er lettere å reflekter rundt koden, noe som igjen gir mulighet for en mer
 vedlikeholdbar kode.
-
-## Del D
