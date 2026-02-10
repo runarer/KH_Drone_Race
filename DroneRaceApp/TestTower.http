@@ -1,0 +1,103 @@
+@base = http://localhost:6060
+
+### Should return 
+GET {{base}}/weather
+
+### Should return 400
+GET {{base}}/nice_weather
+
+### Should return 400
+DELETE {{base}}
+
+### One time -> Created, two times -> Conflict
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "Name" : "Timmy",
+    "MaxCheckpoints" : 6,
+    "DelayMs" : 13
+}
+
+### One time -> Created, two times -> Conflict
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "Name" : "Biff",
+    "MaxCheckpoints" : 8,
+    "DelayMs" : 10
+}
+
+
+### Misformed JSON, should retrun a 400
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "name" : "Berta",
+    "maxcheckpoints" : 12,
+    "delayms" : 7
+}
+
+### Misformed JSON, should retrun a 400
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "name" : "Berta",
+    "maxcheckpoints" : 12,
+}
+
+### Should return 422
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "Name" : "Dolly",
+    "MaxCheckpoints" : -6,
+    "DelayMs" : 13
+}
+
+### Should return 422
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "Name" : "Donny",
+    "MaxCheckpoints" : 6,
+    "DelayMs" : -13
+}
+
+### Should return 422
+POST {{base}}/
+Content-Type: application/json
+
+{
+    "Name" : "",
+    "MaxCheckpoints" : 6,
+    "DelayMs" : 13
+}
+
+### Should return 400, missing body
+POST {{base}}/
+Content-Type: application/json
+
+### Should return 400, not propper json
+POST {{base}}/
+Content-Type: application/json
+
+{
+    HGG
+}
+
+
+### Should return 6 if used after above POST
+GET {{base}}/route?drone=Timmy
+
+### Should return a 404
+GET {{base}}/route?drone=Billy
+
+### Should return a 404
+GET {{base}}/route?drone=
+
