@@ -1,4 +1,4 @@
-using DroneRace.Model;
+using DroneModel;
 
 
 namespace DroneRace.Services;
