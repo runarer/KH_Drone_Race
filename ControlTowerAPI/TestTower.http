@@ -68,6 +68,19 @@ Content-Type: application/json
     "DelayMs" : 13
 }
 
+### Should return 400, missing body
+POST {{base}}/
+Content-Type: application/json
+
+### Should return 400, not propper json
+POST {{base}}/
+Content-Type: application/json
+
+{
+    HGG
+}
+
+
 ### Should return 6 if used after above POST
 GET {{base}}/route?drone=timmy
 
