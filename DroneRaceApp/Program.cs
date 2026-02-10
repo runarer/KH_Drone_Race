@@ -1,5 +1,5 @@
 ﻿
-using DroneRace.Model;
+using DroneModel;
 using DroneRace.Services;
 
 using ControlTowerAPI.Listener;
