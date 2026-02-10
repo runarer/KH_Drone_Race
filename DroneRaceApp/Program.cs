@@ -4,12 +4,13 @@ using DroneRace.Services;
 
 using ControlTowerAPI.Listener;
 
+namespace DroneRaceApp;
 
-await Run();
-
-static async Task Run()
+class Program
 {
-    Drone[] drones =
+    private readonly ControlTower _tower = new("http://localhost:6060/");
+
+    private readonly Drone[] _drones =
     [
         new("Big Berta",12,15),
         new("Tiny Timmy",18,10),
@@ -17,90 +18,97 @@ static async Task Run()
         // new("Quick Quin",10,18),
         // new("Two Ton Tony",15,12),
     ];
-
-    bool running = true;
-
-    while (running)
+    static async Task Main()
     {
-        DisplayMenu();
-
-        var choice = Console.ReadKey(intercept: true).Key;
-
-        switch (choice)
-        {
-            case ConsoleKey.D1:
-                ThreadRace.RaceDronesUsingThreads(drones);
-                break;
-            case ConsoleKey.D2:
-                TaskRace.RaceDronesUsingTasks(drones).Wait();
-                break;
-            case ConsoleKey.D3:
-                await AsyncRace.RaceDronesUsingAsync(drones);
-                break;
-            case ConsoleKey.D4:
-                try
-                {
-                    TaskRaceWithCrash.RaceDronesUsingTasks(drones).Wait();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                break;
-            case ConsoleKey.D5:
-                try
-                {
-                    await AsyncRace.RaceDronesUsingAsync(drones);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-                break;
-            case ConsoleKey.D6:
-                RunTower();
-                break;
-            case ConsoleKey.Q:
-                running = false;
-                break;
-        }
-        if (running)
-            PressToContinue();
+        Program app = new();
+        await app.Run();
     }
-}
 
-static void RunTower()
-{
-    var tower = new ControlTower("http://localhost:6060/");
-
-    try
+    public async Task Run()
     {
-        _ = tower.StartListener();
+
+
+        bool running = true;
+
+        while (running)
+        {
+            DisplayMenu();
+
+            var choice = Console.ReadKey(intercept: true).Key;
+
+            switch (choice)
+            {
+                case ConsoleKey.D1:
+                    ThreadRace.RaceDronesUsingThreads(_drones);
+                    break;
+                case ConsoleKey.D2:
+                    TaskRace.RaceDronesUsingTasks(_drones).Wait();
+                    break;
+                case ConsoleKey.D3:
+                    await AsyncRace.RaceDronesUsingAsync(_drones);
+                    break;
+                case ConsoleKey.D4:
+                    try
+                    {
+                        TaskRaceWithCrash.RaceDronesUsingTasks(_drones).Wait();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+                case ConsoleKey.D5:
+                    try
+                    {
+                        await AsyncRace.RaceDronesUsingAsync(_drones);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+                case ConsoleKey.D6:
+                    RunTower();
+                    break;
+                case ConsoleKey.D7:
+                    StopTower();
+                    break;
+                case ConsoleKey.Q:
+                    running = false;
+                    break;
+            }
+            if (running)
+                PressToContinue();
+        }
+    }
+
+    private void RunTower()
+    {
+        _ = _tower.StartListener();
         Console.Clear();
         Console.WriteLine("File TestTower.http in DroneRaceApp folder can be used to test");
         Console.WriteLine("connections to the server with VSCode extensions like \"Rest Client\"\n");
-        Console.WriteLine("Press any key to stop the tower...");
-        Console.ReadKey(intercept: true);
+    }
+
+    private void StopTower()
+    {
+        Console.Clear();
+        _tower.Stop();
         Console.WriteLine("\nControl Tower stopped\n");
     }
-    finally
+
+    private static void PressToContinue()
     {
-        tower.Stop();
+
+        Console.WriteLine("\nPress any key to continue.");
+        Console.ReadKey(intercept: true);
     }
-}
-
-static void PressToContinue()
-{
-
-    Console.WriteLine("\nPress any key to continue.");
-    Console.ReadKey(intercept: true);
-}
 
 
-static void DisplayMenu()
-{
-    Console.Clear();
-    Console.WriteLine("""
+    private static void DisplayMenu()
+    {
+        Console.Clear();
+        Console.WriteLine("""
 
     ------------- Select Race -------------
 
@@ -119,6 +127,8 @@ static void DisplayMenu()
     ---------------------------------------
     
     6. Start the Control Tower on http://localhost:6060/
+
+    7. Stop the Control Tower
        
     ---------------------------------------
     
@@ -126,5 +136,6 @@ static void DisplayMenu()
 
     Enter your choice: 
     """);
+    }
 }
 
