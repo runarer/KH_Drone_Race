@@ -28,7 +28,12 @@ public class ControlTower
         {
             try
             {
+
                 var context = await _listener.GetContextAsync();
+
+                // Simulate net traveling
+                await Task.Delay(_randomizer.Next(50, 200));
+
                 switch (context.Request.HttpMethod)
                 {
                     case "GET":
@@ -83,7 +88,7 @@ public class ControlTower
             // /drone?=name
             else if (request.Url is not null && request.Url.AbsolutePath == "/route" && request.QueryString["drone"] is not null)
             {
-                string droneName = request.QueryString["drone"]!;
+                string droneName = request.QueryString["drone"] ?? "";
                 Drone? drone = GetRoute(droneName);
 
                 // drone not registered
@@ -97,7 +102,6 @@ public class ControlTower
                 else
                 {
                     response.StatusCode = (int)HttpStatusCode.OK;
-                    // responseMessage = Encoding.UTF8.GetBytes($"{{'checkpoints':{drone.MaxCheckpoints}'}}");
                     responseMessage = Encoding.UTF8.GetBytes(
                         JsonSerializer.Serialize(new { Checkpoints = drone.MaxCheckpoints })
                     );
@@ -145,6 +149,7 @@ public class ControlTower
                     }
                     else
                     {
+                        // All ok, register drone
                         var (code, msg) = RegisterDrone(drone);
                         response.StatusCode = (int)code;
                         responseMessage = msg;
