@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DroneRace\DroneRace.csproj" />
     <ProjectReference Include="..\ControlTowerAPI\ControlTowerAPI.csproj" />
+    <ProjectReference Include="..\ControlTowerRace\ControlTowerRace.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
