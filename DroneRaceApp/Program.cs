@@ -73,6 +73,9 @@ class Program
                 case ConsoleKey.D7:
                     StopTower();
                     break;
+                case ConsoleKey.D8:
+                    RunTowerRace();
+                    break;
                 case ConsoleKey.Q:
                     running = false;
                     break;
@@ -95,6 +98,11 @@ class Program
         Console.Clear();
         _tower.Stop();
         Console.WriteLine("\nControl Tower stopped\n");
+    }
+
+    private void RunTowerRace()
+    {
+
     }
 
     private static void PressToContinue()
@@ -130,6 +138,10 @@ class Program
 
     7. Stop the Control Tower
        
+    ---------------------------------------
+
+    8. Race with control tower
+
     ---------------------------------------
     
     Q. Quit
