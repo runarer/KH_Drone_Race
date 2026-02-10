@@ -1,3 +1,4 @@
+
 namespace ControlTowerAPI.Model;
 
 public class Drone
