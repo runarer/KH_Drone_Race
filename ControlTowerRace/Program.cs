@@ -16,8 +16,17 @@ Drone[] drones =
     new("Two Ton Tony",15,12),
 ];
 
-List<Task> tasks = [.. drones.Select(drone => DroneRegistrer.RegisterDrone(client, drone))];
+List<Task> registerTasks = [.. drones.Select(drone => DroneRegistrer.RegisterDrone(client, drone))];
 
-await Task.WhenAll(tasks);
+await Task.WhenAll(registerTasks);
 
 Console.WriteLine("All drones registered.");
+
+
+Console.WriteLine("Run Drones");
+List<Task> runDronesTasks = [.. drones.Select(drone => DroneRacer.RunDrone(client, drone.Name, drone.DelayMs))];
+
+await Task.WhenAll(runDronesTasks);
+
+Console.WriteLine("Drones finished");
+

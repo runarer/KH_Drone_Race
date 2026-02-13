@@ -10,17 +10,24 @@ public static class DroneRegistrer
 
     public static async Task RegisterDrone(HttpClient client, Drone drone)
     {
-        var endpoint = client.BaseAddress;
+        try
+        {
+            var endpoint = client.BaseAddress;
 
-        string droneAsJson = JsonSerializer.Serialize(drone);
+            string droneAsJson = JsonSerializer.Serialize(drone);
 
-        var content = new StringContent(droneAsJson, Encoding.UTF8, "application/json");
+            var content = new StringContent(droneAsJson, Encoding.UTF8, "application/json");
 
-        var response = await client.PostAsync(endpoint, content);
+            var response = await client.PostAsync(endpoint, content);
 
-        response.EnsureSuccessStatusCode();
+            response.EnsureSuccessStatusCode();
 
-        Console.WriteLine($"Drone {drone.Name} was succesfully registered.");
+            Console.WriteLine($"Drone {drone.Name} was succesfully registered.");
+        }
+        catch (HttpRequestException)
+        {
+            throw new HttpRequestException($"Drone {drone.Name} could not be registered.");
+        }
     }
 
 }

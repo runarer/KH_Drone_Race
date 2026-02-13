@@ -3,12 +3,18 @@ using DroneModel;
 using DroneRace.Services;
 
 using ControlTowerAPI.Listener;
+using ControlTowerRace.Services;
 
 namespace DroneRaceApp;
 
 class Program
 {
-    private readonly ControlTower _tower = new("http://localhost:6060/");
+    private static readonly string address = "http://localhost:6060/";
+    private readonly ControlTower _tower = new(address);
+    private readonly HttpClient _client = new()
+    {
+        BaseAddress = new Uri(address)
+    };
 
     private readonly Drone[] _drones =
     [
@@ -71,7 +77,10 @@ class Program
                     StopTower();
                     break;
                 case ConsoleKey.D8:
-                    RunTowerRace();
+                    await RegisterDrones();
+                    break;
+                case ConsoleKey.D9:
+                    await RunTowerRace();
                     break;
                 case ConsoleKey.Q:
                     running = false;
@@ -97,9 +106,43 @@ class Program
         Console.WriteLine("\nControl Tower stopped\n");
     }
 
-    private void RunTowerRace()
+    private async Task RegisterDrones()
     {
+        Console.Clear();
+        List<Task> registerTasks = [.. _drones.Select(drone => DroneRegistrer.RegisterDrone(_client, drone))];
 
+        var allRegistrations = Task.WhenAll(registerTasks);
+
+        try
+        {
+            await allRegistrations;
+        }
+        catch (Exception)
+        {
+            foreach (var task in registerTasks)
+            {
+                if (task.IsFaulted)
+                {
+                    Console.WriteLine($"Registration Failed");
+                    foreach (var innerException in task.Exception.InnerExceptions)
+                        Console.WriteLine(innerException.Message);
+                }
+            }
+        }
+
+
+        Console.WriteLine("All drones registered.");
+    }
+
+    private async Task RunTowerRace()
+    {
+        Console.Clear();
+        Console.WriteLine("Run Drones");
+        List<Task> runDronesTasks = [.. _drones.Select(drone => DroneRacer.RunDrone(_client, drone.Name, drone.DelayMs))];
+
+        await Task.WhenAll(runDronesTasks);
+
+        Console.WriteLine("Drones finished");
     }
 
     private static void PressToContinue()
@@ -137,7 +180,9 @@ class Program
        
     ---------------------------------------
 
-    8. Race with control tower
+    8. Register drones
+
+    9. Race with control tower
 
     ---------------------------------------
     
