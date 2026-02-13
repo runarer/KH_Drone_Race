@@ -15,3 +15,8 @@ ControlTowerAPI kan startes med `dotnet run` i katalogen.
 
 I DroneRaceApp er det en TestTower.http fil som kan brukes med VSCode extensions som
 "REST Client" for å teste serveren etter at den er startet.
+
+## ControlTowerAPI / ControlTowerRacer
+
+Implementerer den valgfrie delen D. Klienten fungerer, men mangler håndtering av timeout
+og feilmenldinger fra server.
